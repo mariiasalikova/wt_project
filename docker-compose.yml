@@ -1,3 +1,6 @@
+# docker-compose.yml
+version: '3.8' # Specify a Compose file version (optional but recommended)
+
 services:
   backend:
     build: ./backend
@@ -5,12 +8,24 @@ services:
       - "3001:3000"
     volumes:
       - ./backend:/app
+      - /app/node_modules
     restart: unless-stopped
+    networks:
+      - app-network
+    environment:
+      - NODE_ENV=development
+
   frontend:
-      build: ./frontend
-      ports:
-        - "4200:80"
-      depends_on:
-        - backend
-      networks:
-        - app-network
+    build: ./frontend
+    ports:
+      - "4200:80" # Exposes frontend (Nginx) on host port 4200
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+# Define the network used by the services
+networks:
+  app-network:
+    driver: bridge
