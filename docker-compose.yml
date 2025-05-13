@@ -1,6 +1,5 @@
 # docker-compose.yml
-version: '3.8' # Specify a Compose file version (optional but recommended)
-
+version: '3.8'
 services:
   backend:
     build: ./backend
@@ -14,14 +13,23 @@ services:
       - app-network
     environment:
       - NODE_ENV=development
-
-  frontend:
-    build: ./frontend
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "4200:80" # Exposes frontend (Nginx) on host port 4200
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - app-network
+  #   restart: unless-stopped
+  
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
     ports:
-      - "4200:80" # Exposes frontend (Nginx) on host port 4200
-    depends_on:
-      - backend
-    networks:
+      - "27017:27017"
+    volumes:
+      - ./database:/data/db
       - app-network
     restart: unless-stopped
 
