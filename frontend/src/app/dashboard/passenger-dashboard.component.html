@@ -1,0 +1,71 @@
+<div class="bg-sky-50 min-h-screen p-4 sm:p-8">
+    <!-- Header (can be a shared component) -->
+    <header class="w-full max-w-6xl mx-auto bg-sky-600 text-white shadow-lg rounded-xl p-4 sm:p-6 mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center">
+            <div class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-0">Trippy - Dashboard</div>
+            <nav>
+                <ul class="flex flex-wrap justify-center space-x-3 sm:space-x-6 text-sm sm:text-base">
+                    <li><a routerLink="/" class="hover:text-sky-200 transition-colors">Home</a></li>
+                    <li><a routerLink="/flights/search" class="hover:text-sky-200 transition-colors">New Search</a></li>
+                    <li><a routerLink="/passenger/settings" class="hover:text-sky-200 transition-colors">Settings</a>
+                    </li>
+                    <li><a href="#" (click)="logout()" class="hover:text-sky-200 transition-colors">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold text-sky-800 mb-6">Welcome, [Name]!</h1>
+
+        <!-- My Flights Section -->
+        <section class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-2xl font-semibold text-sky-700 mb-4">My Flights</h2>
+            <div *ngIf="myFlights.length === 0" class="text-gray-600">
+                You have no upcoming flights. <a routerLink="/flights/search"
+                    class="text-sky-600 hover:underline">Search for flights now!</a>
+            </div>
+            <div *ngIf="myFlights.length > 0" class="space-y-4">
+                <!-- Repeat this block for each flight -->
+                <div *ngFor="let flight of myFlights"
+                    class="border border-gray-200 p-4 rounded-md hover:shadow-lg transition-shadow">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <div>
+                            <h3 class="text-lg font-medium text-sky-700">{{ flight.from }} to {{ flight.to }}</h3>
+                            <p class="text-sm text-gray-500">Date: {{ flight.date }} | Seat: {{ flight.seatNumber }} ({{
+                                flight.class }})</p>
+                        </div>
+                        <div class="mt-3 sm:mt-0">
+                            <button (click)="manageBooking(flight.id)"
+                                class="text-sm bg-sky-500 text-white px-3 py-1.5 rounded-md hover:bg-sky-600 transition-colors mr-2">Manage
+                                Booking</button>
+                            <button (click)="viewTicket(flight.id)"
+                                class="text-sm bg-orange-500 text-white px-3 py-1.5 rounded-md hover:bg-orange-600 transition-colors">View
+                                Ticket</button>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-xs text-gray-500">Booking ID: {{ flight.id }} | Total: ${{
+                        flight.totalPrice.toFixed(2) }}</div>
+                </div>
+                <!-- End flight block -->
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-semibold text-sky-700 mb-4">Quick Actions</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a routerLink="/flights/search"
+                    class="block p-4 bg-sky-100 hover:bg-sky-200 rounded-md text-center transition-colors">
+                    <h3 class="font-medium text-sky-700">Book a New Flight</h3>
+                    <p class="text-sm text-gray-600">Find your next adventure.</p>
+                </a>
+                <a routerLink="/passenger/settings"
+                    class="block p-4 bg-sky-100 hover:bg-sky-200 rounded-md text-center transition-colors">
+                    <h3 class="font-medium text-sky-700">Account Settings</h3>
+                    <p class="text-sm text-gray-600">Update your profile or password.</p>
+                </a>
+            </div>
+        </section>
+    </div>
+</div>

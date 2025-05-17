@@ -1,0 +1,136 @@
+<div class="bg-sky-700 min-h-screen p-4 sm:p-8 flex items-center justify-center">
+    <div class="bg-sky-100 rounded-xl shadow-2xl p-6 sm:p-10 w-full max-w-lg">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-sky-700">Welcome</h1>
+            <p class="text-gray-600">Access your account or create a new one.</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="mb-6">
+            <nav class="flex space-x-1 rounded-lg p-1 bg-sky-200">
+                <button (click)="setActiveTab('login')"
+                    [ngClass]="{'bg-white text-sky-700 shadow-md': activeTab === 'login', 'text-sky-600 hover:bg-sky-300 hover:bg-opacity-50': activeTab !== 'login'}"
+                    class="flex-1 py-2 px-4 rounded-md font-medium text-center transition-colors">
+                    Login
+                </button>
+                <button (click)="setActiveTab('signup')"
+                    [ngClass]="{'bg-white text-sky-700 shadow-md': activeTab === 'signup', 'text-sky-600 hover:bg-sky-300 hover:bg-opacity-50': activeTab !== 'signup'}"
+                    class="flex-1 py-2 px-4 rounded-md font-medium text-center transition-colors">
+                    Sign Up
+                </button>
+            </nav>
+        </div>
+
+        <!-- Login Form -->
+        <div *ngIf="activeTab === 'login'">
+            <form (ngSubmit)="onLoginSubmit()" #loginForm="ngForm" class="space-y-6">
+                <div>
+                    <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="login-email" name="loginEmail" [(ngModel)]="loginCredentials.email"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                        required email #loginEmail="ngModel">
+                    <div *ngIf="loginEmail.invalid && (loginEmail.dirty || loginEmail.touched)"
+                        class="text-red-500 text-xs mt-1">
+                        <span *ngIf="loginEmail.errors?.['required']">Email is required.</span>
+                        <span *ngIf="loginEmail.errors?.['email']">Please enter a valid email.</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="login-password" name="loginPassword"
+                        [(ngModel)]="loginCredentials.password"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                        required #loginPassword="ngModel">
+                    <div *ngIf="loginPassword.invalid && (loginPassword.dirty || loginPassword.touched)"
+                        class="text-red-500 text-xs mt-1">
+                        <span *ngIf="loginPassword.errors?.['required']">Password is required.</span>
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" [disabled]="loginForm.invalid"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50">
+                        Login
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Passenger Sign-Up Form -->
+        <div *ngIf="activeTab === 'signup'">
+            <form (ngSubmit)="onSignupSubmit()" #signupForm="ngForm" class="space-y-4">
+                <div>
+                    <label for="signup-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="signup-name" name="signupName" [(ngModel)]="signupDetails.name"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                        required #signupName="ngModel">
+                    <div *ngIf="signupName.invalid && (signupName.dirty || signupName.touched)"
+                        class="text-red-500 text-xs mt-1">
+                        <span *ngIf="signupName.errors?.['required']">Name is required.</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="signup-email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="signup-email" name="signupEmail" [(ngModel)]="signupDetails.email"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                        required email #signupEmail="ngModel">
+                    <div *ngIf="signupEmail.invalid && (signupEmail.dirty || signupEmail.touched)"
+                        class="text-red-500 text-xs mt-1">
+                        <span *ngIf="signupEmail.errors?.['required']">Email is required.</span>
+                        <span *ngIf="signupEmail.errors?.['email']">Please enter a valid email.</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="signup-phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input type="tel" id="signup-phone" name="signupPhone" [(ngModel)]="signupDetails.phone"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                        required #signupPhone="ngModel">
+                    <div *ngIf="signupPhone.invalid && (signupPhone.dirty || signupPhone.touched)"
+                        class="text-red-500 text-xs mt-1">
+                        <span *ngIf="signupPhone.errors?.['required']">Phone number is required.</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="signup-password" name="signupPassword"
+                        [(ngModel)]="signupDetails.password"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                        required minlength="6" #signupPassword="ngModel">
+                    <div *ngIf="signupPassword.invalid && (signupPassword.dirty || signupPassword.touched)"
+                        class="text-red-500 text-xs mt-1">
+                        <span *ngIf="signupPassword.errors?.['required']">Password is required.</span>
+                        <span *ngIf="signupPassword.errors?.['minlength']">Password must be at least 6
+                            characters.</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="signup-confirm-password" class="block text-sm font-medium text-gray-700">Confirm
+                        Password</label>
+                    <input type="password" id="signup-confirm-password" name="signupConfirmPassword"
+                        [(ngModel)]="signupDetails.confirmPassword"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                        required #signupConfirmPassword="ngModel">
+                    <div *ngIf="signupConfirmPassword.invalid && (signupConfirmPassword.dirty || signupConfirmPassword.touched)"
+                        class="text-red-500 text-xs mt-1">
+                        <span *ngIf="signupConfirmPassword.errors?.['required']">Confirm password is required.</span>
+                    </div>
+                    <div *ngIf="signupDetails.password !== signupDetails.confirmPassword && signupConfirmPassword.dirty"
+                        class="text-red-500 text-xs mt-1">
+                        Passwords do not match.
+                    </div>
+                </div>
+                <div>
+                    <button type="submit"
+                        [disabled]="signupForm.invalid || signupDetails.password !== signupDetails.confirmPassword"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50">
+                        Create Account
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="mt-6 text-center text-sm">
+            <a routerLink="/airlines/first-access" class="font-medium text-sky-600 hover:text-sky-500">
+                Airline first-time access?
+            </a>
+        </div>
+    </div>
+</div>

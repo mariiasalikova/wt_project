@@ -1,0 +1,138 @@
+<div class="bg-sky-50 min-h-screen p-4 sm:p-8">
+    <!-- Header -->
+    <header class="w-full max-w-5xl mx-auto bg-sky-600 text-white shadow-lg rounded-xl p-4 sm:p-6 mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center">
+            <div class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-0">Trippy - Purchase Ticket</div>
+            <nav>
+                <ul class="flex flex-wrap justify-center space-x-3 sm:space-x-6 text-sm sm:text-base">
+                    <li><a routerLink="/" class="hover:text-sky-200 transition-colors">Home</a></li>
+                    <li><a routerLink="/flights/search" class="hover:text-sky-200 transition-colors">Back to Search</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold text-sky-800 mb-2">Complete Your Booking</h1>
+        <p class="text-gray-600 mb-6" *ngIf="flightDetails">For flight {{ flightDetails?.flightNumber }} from {{
+            flightDetails?.fromCode }} to {{ flightDetails?.toCode }} on {{ flightDetails?.departureDate}}</p>
+        <p class="text-gray-600 mb-6" *ngIf="!flightDetails">Loading flight details...</p>
+
+
+        <div *ngIf="flightDetails" class="space-y-8">
+            <!-- Select Ticket Class -->
+            <section>
+                <h2 class="text-xl font-semibold text-sky-700 mb-3 border-b pb-2">1. Select Ticket Class</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div *ngFor="let classOption of flightDetails.availableClasses"
+                        (click)="selectClass(classOption.name)"
+                        [ngClass]="{'ring-2 ring-sky-500 border-sky-500': purchaseDetails.ticketClass === classOption.name, 'border-gray-300 hover:border-sky-400': purchaseDetails.ticketClass !== classOption.name}"
+                        class="p-4 border rounded-lg cursor-pointer transition-all">
+                        <h3 class="font-medium text-lg">{{ classOption.name }}</h3>
+                        <p class="text-2xl font-bold text-orange-600">${{ classOption.price.toFixed(2) }}</p>
+                        <p class="text-xs text-gray-500">{{ classOption.seatsAvailable }} seats left</p>
+                    </div>
+                </div>
+                <div *ngIf="!purchaseDetails.ticketClass && submitted" class="text-red-500 text-sm mt-2">Please select a
+                    ticket class.</div>
+            </section>
+
+            <!-- Choose Seat(s) -->
+            <section *ngIf="purchaseDetails.ticketClass">
+                <h2 class="text-xl font-semibold text-sky-700 mb-3 border-b pb-2">2. Choose Your Seat(s)</h2>
+                <p class="text-sm text-gray-600 mb-3">Enter desired seat number (e.g., 12A). For multiple passengers,
+                    separate by comma. (Simplified for now)</p>
+                <div>
+                    <label for="seatSelection" class="block text-sm font-medium text-gray-700">Seat Number(s)</label>
+                    <input type="text" id="seatSelection" name="seatSelection" [(ngModel)]="purchaseDetails.seatNumbers"
+                        class="mt-1 block w-full sm:w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                        placeholder="e.g., 12A, 12B">
+                </div>
+                <div *ngIf="!purchaseDetails.seatNumbers && submitted && purchaseDetails.ticketClass"
+                    class="text-red-500 text-sm mt-2">Please enter seat selection(s).</div>
+                <!-- A more complex seat map could go here -->
+            </section>
+
+            <!-- Add Extras -->
+            <section *ngIf="purchaseDetails.ticketClass">
+                <h2 class="text-xl font-semibold text-sky-700 mb-3 border-b pb-2">3. Add Extras</h2>
+                <div class="space-y-3">
+                    <div *ngFor="let extra of availableExtras"
+                        class="flex items-center justify-between p-3 border rounded-md bg-gray-50">
+                        <div>
+                            <h4 class="font-medium text-gray-800">{{ extra.name }}</h4>
+                            <p class="text-sm text-gray-500">Additional ${{ extra.price.toFixed(2) }}</p>
+                        </div>
+                        <input type="checkbox" [id]="'extra-' + extra.id" [name]="'extra-' + extra.id"
+                            (change)="toggleExtra(extra, $event)"
+                            class="h-5 w-5 text-sky-600 border-gray-300 rounded focus:ring-sky-500">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Confirm and Pay -->
+            <section *ngIf="purchaseDetails.ticketClass">
+                <h2 class="text-xl font-semibold text-sky-700 mb-3 border-b pb-2">4. Confirm and Pay</h2>
+                <div class="bg-sky-100 p-4 rounded-lg">
+                    <h3 class="font-medium text-lg text-sky-800 mb-2">Order Summary</h3>
+                    <div class="space-y-1 text-sm">
+                        <p>Flight: {{ flightDetails.flightNumber }} ({{ purchaseDetails.ticketClass }}) - Seat(s): {{
+                            purchaseDetails.seatNumbers || 'N/A' }}</p>
+                        <p>Base Price: ${{ getBasePrice().toFixed(2) }}</p>
+                        <div *ngIf="purchaseDetails.selectedExtras.length > 0">
+                            <p>Extras:</p>
+                            <ul class="list-disc list-inside ml-4">
+                                <li *ngFor="let extra of purchaseDetails.selectedExtras">{{ extra.name }} (+${{
+                                    extra.price.toFixed(2) }})</li>
+                            </ul>
+                        </div>
+                        <p class="font-bold text-lg text-orange-600 mt-2">Total Price: ${{
+                            calculateTotalPrice().toFixed(2) }}</p>
+                    </div>
+                </div>
+
+                <!-- Placeholder for Payment Form -->
+                <div class="mt-6">
+                    <h3 class="font-medium text-lg text-gray-800 mb-3">Payment Details (Placeholder)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="cardName" class="block text-sm font-medium text-gray-700">Name on Card</label>
+                            <input type="text" id="cardName"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="cardNumber" class="block text-sm font-medium text-gray-700">Card Number</label>
+                            <input type="text" id="cardNumber"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                                placeholder="XXXX XXXX XXXX XXXX">
+                        </div>
+                        <div>
+                            <label for="expiryDate" class="block text-sm font-medium text-gray-700">Expiry Date</label>
+                            <input type="text" id="expiryDate"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                                placeholder="MM/YY">
+                        </div>
+                        <div>
+                            <label for="cvv" class="block text-sm font-medium text-gray-700">CVV</label>
+                            <input type="text" id="cvv"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
+                                placeholder="XXX">
+                        </div>
+                    </div>
+                </div>
+
+                <button (click)="confirmPurchase()"
+                    class="mt-8 w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
+                    Confirm & Pay ${{ calculateTotalPrice().toFixed(2) }}
+                </button>
+            </section>
+        </div>
+        <div *ngIf="!flightDetails && !isLoadingFlight" class="text-center text-red-500 py-10">
+            Could not load flight details. Please try again.
+        </div>
+        <div *ngIf="isLoadingFlight" class="text-center py-10">
+            <p class="text-sky-600 font-semibold">Loading flight details...</p>
+        </div>
+    </div>
+</div>
