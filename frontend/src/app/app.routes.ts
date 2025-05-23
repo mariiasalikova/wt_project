@@ -5,5 +5,4 @@ import { LoginSignupComponent } from './authentic/login-signup/login-signup.comp
 
 export const routes: Routes = [
     { path: '', component: FlightSearchComponent },
-    { path: 'e', component: LoginSignupComponent }
 ];
