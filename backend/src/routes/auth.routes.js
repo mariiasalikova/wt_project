@@ -10,7 +10,7 @@ const { protect, authorize } = require('../middleware/auth.middleware');
 const router = express.Router();
 
 // Passenger Auth
-x.post('/passenger/register', passengerRegister);
+router.post('/passenger/register', passengerRegister);
 router.post('/passenger/login', passengerLogin);
 
 // Airline Auth

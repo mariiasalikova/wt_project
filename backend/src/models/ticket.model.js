@@ -19,4 +19,4 @@ const ticketSchema = new mongoose.Schema({
 
 ticketSchema.index({ userId: 1, flightId: 1 });
 
-module.exports = mongoose.model('Ticket', ticketSchema);
+module.exports = mongoose.models.Ticket || mongoose.model('Ticket', ticketSchema);

@@ -1,5 +1,5 @@
 const { verifyToken } = require('../services/token.service');
-const User = require('../../../frontend/src/app/models/user.model');
+const User = require('../models/user.model');
 const Airline = require('../models/airline.model');
 
 // Protect routes
