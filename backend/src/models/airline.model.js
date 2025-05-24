@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 
 const airlineSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  // email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   passwordHash: { type: String, required: true },
   taxCode: { type: String },
   hqAddress: { type: String },
@@ -29,4 +29,4 @@ airlineSchema.pre('save', async function (next) {
   }
 });
 
-module.exports = mongoose.model('Airline', airlineSchema);
+module.exports = mongoose.models.Airline || mongoose.model('Airline', airlineSchema);

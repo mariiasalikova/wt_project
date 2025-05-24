@@ -6,4 +6,4 @@ const airportSchema = new mongoose.Schema({
   code: { type: String, required: true, unique: true, uppercase: true, trim: true, length: 3 },
 }, { timestamps: true });
 
-module.exports = mongoose.model('Airport', airportSchema);
+module.exports = mongoose.models.Airport || mongoose.model('Airport', airportSchema);

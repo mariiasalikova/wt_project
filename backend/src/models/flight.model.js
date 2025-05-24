@@ -24,4 +24,4 @@ const flightSchema = new mongoose.Schema({
 
 flightSchema.index({ departure: 1, 'route.from.code': 1, 'route.to.code': 1 }); // Example index
 
-module.exports = mongoose.model('Flight', flightSchema);
+module.exports = mongoose.models.Flight || mongoose.model('Flight', flightSchema);

@@ -8,4 +8,4 @@ const extraSchema = new mongoose.Schema({
   // airlineId: { type: mongoose.Schema.Types.ObjectId, ref: 'Airline', default: null }, // If extras are airline-specific
 }, { timestamps: true });
 
-module.exports = mongoose.model('Extra', extraSchema);
+module.exports = mongoose.models.Extra || mongoose.model('Extra', extraSchema);

@@ -16,4 +16,4 @@ const routeSchema = new mongoose.Schema({
 routeSchema.index({ airlineId: 1, 'from.airportId': 1, 'to.airportId': 1 }, { unique: true });
 
 
-module.exports = mongoose.model('Route', routeSchema);
+module.exports = mongoose.models.Route || mongoose.model('Route', routeSchema);
