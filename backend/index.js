@@ -1,6 +1,7 @@
 require('dotenv').config(); // Load .env variables
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const connectDB = require('./src/config/db');
 const authRoutes = require('./src/routes/auth.routes');
 const setupRoutes = require('./src/routes/setup.routes');
@@ -13,10 +14,13 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 
 // Middleware
-app.use(cors()); // Enable CORS for all routes
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true // Allow cookies to be sent and received
+}));
 app.use(express.json()); // Body parser for JSON
-app.use(express.urlencoded({ extended: false })); // Body parser for URL-encoded data
-// app.use(cookieParser()); // If using cookies
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
   res.status(200).send('Server is running and accessible!');

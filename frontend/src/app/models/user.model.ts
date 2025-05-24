@@ -13,7 +13,6 @@ export interface Airline extends User { // Airlines can share some User properti
 }
 
 export interface AuthResponse {
-  token: string;
   user?: User; // For passenger/admin login
   airline?: Airline; // For airline login
   requiresPasswordChange?: boolean; // For airline first-time login

@@ -4,6 +4,8 @@ const {
   passengerLogin,
   airlineLogin,
   airlineSetInitialDetails,
+  logout,
+  getAuthStatus
 } = require('../controllers/auth.controller');
 const { protect, authorize } = require('../middleware/auth.middleware');
 
@@ -17,10 +19,15 @@ router.post('/passenger/login', passengerLogin);
 router.post('/airline/login', airlineLogin);
 router.post(
   '/airline/set-initial-details',
-  protect, // Ensures airline is logged in (even with temp pass)
-  authorize('airline'), // Ensures it's an airline user
+  protect,
+  authorize('airline'),
   airlineSetInitialDetails
 );
-// Add other auth routes like logout, password reset etc. as needed
+
+// Logout route (can be POST or GET, POST is slightly more conventional for actions)
+router.post('/logout', logout);
+
+// Status route (to check if user is authenticated via cookie)
+router.get('/status', protect, getAuthStatus);
 
 module.exports = router;

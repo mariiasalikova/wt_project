@@ -2,14 +2,16 @@ const { verifyToken } = require('../services/token.service');
 const User = require('../models/user.model');
 const Airline = require('../models/airline.model');
 
-// Protect routes
 exports.protect = async (req, res, next) => {
   let token;
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
+
+  if (req.cookies && req.cookies.authToken) {
+    token = req.cookies.authToken;
   }
-  // else if (req.cookies.token) { // Optional: check for token in cookies if using them
-  //   token = req.cookies.token;
+
+  // Optional: Keep Bearer token for API clients or testing, but prioritize cookie for web app
+  // else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+  //   token = req.headers.authorization.split(' ')[1];
   // }
 
   if (!token) {
@@ -19,33 +21,37 @@ exports.protect = async (req, res, next) => {
   try {
     const decoded = verifyToken(token);
     if (!decoded) {
-        return res.status(401).json({ message: 'Not authorized, token failed' });
+        return res.status(401).json({ message: 'Not authorized, token invalid' });
     }
 
-    // Attach user/airline to request object
-    // You might want to fetch the fresh user/airline from DB to ensure they still exist / are not deleted
+    let foundUser;
     if (decoded.role === 'airline') {
-        req.user = await Airline.findById(decoded.airlineId).select('-passwordHash');
-        if (!req.user) return res.status(401).json({ message: 'Airline not found' });
-        req.user.role = 'airline'; // Ensure role is explicitly set
+        // Ensure decoded.airlineId exists if that's what your token payload uses
+        foundUser = await Airline.findById(decoded.airlineId || decoded.id || decoded.userId).select('-passwordHash');
+        if (foundUser) foundUser.role = 'airline';
     } else { // 'passenger' or 'admin'
-        req.user = await User.findById(decoded.userId).select('-passwordHash');
-        if (!req.user || req.user.deleted) return res.status(401).json({ message: 'User not found or deleted' });
-        // req.user already has role from User model
+        foundUser = await User.findById(decoded.userId || decoded.id).select('-passwordHash');
     }
-    // If req.user is null after DB query, it means user/airline was deleted after token was issued
-    if (!req.user) {
-        return res.status(401).json({ message: 'User/Airline belonging to this token no longer exists' });
+
+    if (!foundUser || (foundUser.deleted && decoded.role !== 'airline') ) {
+        return res.status(401).json({ message: 'User/Airline belonging to this token no longer exists or is deleted' });
     }
+
+    req.user = foundUser; // Attach user/airline object to request
+    if (decoded.role === 'airline' && decoded.airlineId) req.user.id = decoded.airlineId;
+    else if (decoded.userId) req.user.id = decoded.userId;
+
 
     next();
   } catch (error) {
-    console.error('Token verification error:', error);
-    return res.status(401).json({ message: 'Not authorized, token failed' });
+    console.error('Token verification error:', error.message);
+    // Clear invalid cookie
+    res.cookie('authToken', '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'Lax', expires: new Date(0) });
+    return res.status(401).json({ message: 'Not authorized, token failed verification' });
   }
 };
 
-// Grant access to specific roles
+// Grant access to specific roles (authorize middleware remains the same)
 exports.authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {

@@ -34,6 +34,11 @@
 - Tax Code
 - Address
 
+### Airline Admin Login:
+
+- Id
+- Password
+
 ---
 
 ## Passenger Section
