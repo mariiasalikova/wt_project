@@ -4,7 +4,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "3001:3000"
+      - "3000:3000"
     volumes:
       - ./backend:/app
       - /app/node_modules 
@@ -13,15 +13,15 @@ services:
       - app-network
     environment:
       - NODE_ENV=development
-  frontend:
-    build: ./frontend
-    ports:
-      - "4200:80" # Exposes frontend (Nginx) on host port 4200
-    depends_on:
-      - backend
-    networks:
-      - app-network
-    restart: unless-stopped
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "4200:80" # Exposes frontend (Nginx) on host port 4200
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - app-network
+  #   restart: unless-stopped
 
   mongodb:
     image: mongo:latest

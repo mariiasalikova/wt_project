@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./src/config/db');
 const authRoutes = require('./src/routes/auth.routes');
+const setupRoutes = require('./src/routes/setup.routes');
 // const cookieParser = require('cookie-parser'); // If you decide to use cookies
 
 const app = express();
@@ -16,6 +17,9 @@ app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // Body parser for JSON
 app.use(express.urlencoded({ extended: false })); // Body parser for URL-encoded data
 // app.use(cookieParser()); // If using cookies
+
+// ---- DB Init ----
+app.use('/api', setupRoutes); // <--- ADD THIS (Mount before other API routes or ensure distinct path)
 
 // Routes
 app.use('/api/auth', authRoutes);
